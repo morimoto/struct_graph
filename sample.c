@@ -111,7 +111,7 @@ struct snd_pcm_runtime {
 struct snd_soc_pcm_runtime {
   struct snd_soc_card *card;
   struct snd_soc_dai_link *dai_link;
-  struct snd_pcm_ops ops, *ops;
+  struct snd_pcm_ops ops;
 
   /* runtime devices */
   struct snd_pcm *pcm;
