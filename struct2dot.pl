@@ -46,7 +46,12 @@ sub remove_comment {
 }
 
 sub separate_type_member {
-	my ($struct, $type, $line) = @_;
+	my ($const, $struct, $type, $line) = @_;
+
+	if ($$line =~ /const\s+(.*)$/) {
+		$$const = "const ";
+		$$line = $1;
+	}
 
 	if ($$line =~ /struct\s+(.*)$/) {
 		$$struct = "struct ";
@@ -61,11 +66,11 @@ sub separate_type_member {
 
 sub print_struct_line {
 	my ($out, $name, $line) = @_;
-	my ($struct, $type);
+	my ($const, $struct, $type);
 	my ($p, $m);
 	my (@member);
 
-	separate_type_member(\$struct, \$type, \$line);
+	separate_type_member(\$const, \$struct, \$type, \$line);
 
 	@member = split(/,/, $line);
 
@@ -75,7 +80,7 @@ sub print_struct_line {
 		$m = $mem;
 		$m =~ s/\*//g;
 
-		$p = "<$m>$struct$type $mem";
+		$p = "<$m>$const$struct$type $mem";
 
 		if ($$out eq "") {
 			$$out = "$p";
