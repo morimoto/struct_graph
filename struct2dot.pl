@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #==============================
 #
-# struct_graph
+# struct2dot
 #
 # 2016/07/21 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 #==============================
