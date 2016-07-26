@@ -84,7 +84,11 @@ sub print_struct_line {
 		}
 
 		if ($struct ne "") {
-		    $link = $link . "$name:$m -> $type [color = blue, lhead = cluster_$type];\n";
+			if ($m ne $mem) {
+				$link = $link . "$name:$m -> $type [color = red, lhead = cluster_$type];\n";
+			} else {
+				$link = $link . "$name:$m -> $type [color = blue, style = bold, arrowhead = box, lhead = cluster_$type];\n";
+			}
 		}
 	}
 
