@@ -45,29 +45,49 @@ sub remove_comment {
 	$$p =~ s/#ifdef[\s\S]*?#endif//g;
 }
 
-sub set_label {
-	my ($name, $line) = @_;
-	my ($lable);
+sub separate_type_member {
+	my ($struct, $type, $line) = @_;
 
-	if ($$line =~ /struct\s+(\S*)\s+.*$/) {
-		$lable = $1;
-	} else {
-		return;
+	if ($$line =~ /struct\s+(.*)$/) {
+		$$struct = "struct ";
+		$$line = $1;
 	}
 
-	$$line = "<$lable>$$line";
+	$$line =~ /^(\S*)\s+(.*)$/;
 
-	$link = $link . "$name:$lable -> $lable [color = blue, lhead = cluster_$lable];\n";
+	$$type = $1;
+	$$line = $2;
 }
 
-sub push_out {
-	my ($out , $next) = @_;
+sub print_struct_line {
+	my ($out, $name, $line) = @_;
+	my ($struct, $type);
+	my ($p, $m);
+	my (@member);
 
-	if ($$out eq "") {
-		$$out = $next;
-	} else {
-		$$out = "$$out|$next";
+	separate_type_member(\$struct, \$type, \$line);
+
+	@member = split(/,/, $line);
+
+	foreach my $mem (@member) {
+		remove_white_space(\$mem);
+
+		$m = $mem;
+		$m =~ s/\*//g;
+
+		$p = "<$m>$struct$type $mem";
+
+		if ($$out eq "") {
+			$$out = "$p";
+		} else {
+			$$out = "$$out|$p";
+		}
+
+		if ($struct ne "") {
+		    $link = $link . "$name:$m -> $type [color = blue, lhead = cluster_$type];\n";
+		}
 	}
+
 }
 
 sub print_struct {
@@ -97,8 +117,7 @@ sub print_struct {
 		remove_white_space(\$line);
 		$line =~ s/\t/ /g;
 		last if ($line eq "");
-		set_label($name, \$line);
-		push_out(\$out, $line);
+		print_struct_line(\$out, $name, $line);
 	}
 	$out = "{$out}";
 	print("$out\"];\n");
