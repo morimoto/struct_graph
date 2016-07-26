@@ -9,4 +9,4 @@
 FILE=$1
 [ ! -f $1 ] && echo "no such file" && exit
 
-dot -Teps $FILE -o $FILE.pdf 
+dot -Tps $FILE -o $FILE.ps

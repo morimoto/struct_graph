@@ -29,7 +29,7 @@
 
 		> struct2dot.pl sample.c > sample
 
-	この dot 言語をコンパイルすると PDF ファイルが出来上がる
+	この dot 言語をコンパイルすると PS ファイルが出来上がる
 
 		> dot2graph.pl sample
 
