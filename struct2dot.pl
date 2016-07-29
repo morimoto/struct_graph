@@ -88,12 +88,18 @@ sub print_struct_line {
 			$$out = "$$out|$p";
 		}
 
-		if ($struct ne "") {
-			if ($m ne $mem) {
-				$link = $link . "$name:$m -> $type [color = red, lhead = cluster_$type];\n";
+		next if ($struct eq "");
+
+		if ($m ne $mem) {
+			my ($pattern) = "\t$type:.* -> $name \\[color = red,.*";
+			if (grep (/$pattern/, @link)) {
+				@link = grep (!/$pattern/, @link);
+				push(@link, "\t$name:$m -> $type [color = magenta, lhead = cluster_$type, ltail = cluster_$name, dir = both];\n");
 			} else {
-				$link = $link . "$name:$m -> $type [color = blue, style = bold, arrowhead = box, lhead = cluster_$type];\n";
+				push(@link, "\t$name:$m -> $type [color = red, lhead = cluster_$type];\n");
 			}
+		} else {
+			push(@link, "\t$name:$m -> $type [color = blue, style = bold, arrowhead = box, lhead = cluster_$type];\n");
 		}
 	}
 
@@ -163,7 +169,7 @@ digraph struct_graph {
 ";
 
 
-$link = "";
+@link;
 while (length($file)) {
 	remove_white_space(\$file);
 
@@ -174,6 +180,5 @@ while (length($file)) {
 	};
 }
 
-print "$link
-}
-";
+print @link;
+print "}\n";
